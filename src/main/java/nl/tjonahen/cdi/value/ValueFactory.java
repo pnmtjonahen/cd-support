@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package nl.tjonahen.cdi.value;
 
+import java.util.logging.Logger;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
@@ -24,14 +24,17 @@ import javax.inject.Singleton;
 
 /**
  * Factory to produce Values.
- * 
- * Properties are found first by key (if specified) then by fully qualified field name, and lastly by only field name.
- * If no value was found and no default was given an exception is thrown.
- * 
+ *
+ * Properties are found first by key (if specified) then by fully qualified
+ * field name, and lastly by only field name. If no value was found and no
+ * default was given an exception is thrown.
+ *
  * @author Philippe Tjon - A - Hen
  */
 @Singleton
 public class ValueFactory {
+
+    private static final Logger LOGGER = Logger.getLogger(ValueFactory.class.getName());
 
     @Inject
     private PropertyResolver resolver;
@@ -39,26 +42,27 @@ public class ValueFactory {
     @Produces
     @Value
     public String getStringValue(InjectionPoint ip) {
-
         // Trying with explicit key defined on the field
         final String key = ip.getAnnotated().getAnnotation(Value.class).key();
-        if (!key.trim().isEmpty()) {
-            return resolver.getValue(key);
-        }
-
-        // Falling back to fully-qualified field name resolving.
-        final String fqn = ip.getMember().getDeclaringClass().getName() + "." + ip.getMember().getName();
-        String value = resolver.getValue(fqn);
-
-        // No luck... so perhaps just the field name?
-        if (value == null) {
-            value = resolver.getValue(ip.getMember().getName());
-        }
         final String defaultValue = ip.getAnnotated().getAnnotation(Value.class).value();
+        final String fqn = ip.getMember().getDeclaringClass().getName() + "." + ip.getMember().getName();
+
+        String value;
+        if (!key.trim().isEmpty()) {
+            // first given key
+            value = resolver.getValue(key);
+        } else {
+            // Falling back to fully-qualified field name resolving.
+            value = resolver.getValue(fqn);
+            // No luck... so perhaps just the field name?
+            if (value == null) {
+                value = resolver.getValue(ip.getMember().getName());
+            }
+        }
 
         if (value == null && !defaultValue.trim().isEmpty()) {
             return defaultValue;
-        }    
+        }
         // No can do - no value found and no default specified.
         if (value == null) {
             throw new IllegalStateException("No value defined for field: " + fqn);
@@ -73,5 +77,5 @@ public class ValueFactory {
         final String value = getStringValue(ip);
         return (value != null) ? Integer.valueOf(value) : null;
     }
-    
+
 }
