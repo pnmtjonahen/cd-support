@@ -32,9 +32,9 @@ import javax.transaction.Transactional;
  */
 @Transactional
 @Interceptor
-public class TransactionManager {
+public class TransactionalInterceptor {
 
-    private final static Logger LOGGER = Logger.getLogger(TransactionManager.class.getName());
+    private final static Logger LOGGER = Logger.getLogger(TransactionalInterceptor.class.getName());
     
     @PersistenceContext
     private EntityManager entityManager;
