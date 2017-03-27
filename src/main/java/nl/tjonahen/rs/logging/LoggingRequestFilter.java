@@ -14,47 +14,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package nl.tjonahen.rs.logging;
 
 import java.io.IOException;
 import java.util.logging.Logger;
 import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.ext.Provider;
-import sun.security.provider.certpath.OCSPResponse;
 
 /**
  *
  * @author Philippe Tjon - A - Hen
  */
 @Provider
-public class ResponseLoggerFilter implements ContainerResponseFilter {
-    private final static Logger LOGGER = Logger.getLogger(ResponseLoggerFilter.class.getName());
+public class LoggingRequestFilter implements ContainerRequestFilter {
 
-    
+    private final static Logger LOGGER = Logger.getLogger(LoggingRequestFilter.class.getName());
+
     @Override
-    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+    public void filter(ContainerRequestContext requestContext) throws IOException {
         LOGGER.info(() -> {
             final StringBuilder sb = new StringBuilder();
-            sb.append("Response:\nurl     : ").append(requestContext.getUriInfo().getAbsolutePath().getPath());
+            
+            sb.append("Request:\nurl     : ").append(requestContext.getUriInfo().getAbsolutePath().getPath());
             sb.append("\nMethod  : ").append(requestContext.getRequest().getMethod());
-            sb.append("\nStatus  : ").append(responseContext.getStatus())
-                                     .append(" ")
-                                     .append(Response.Status.fromStatusCode(responseContext.getStatus()));
             sb.append("\nHeaders :\n");
-            responseContext.getHeaders().entrySet().forEach((e) -> {
+            requestContext.getHeaders().entrySet().forEach((e) -> {
                 sb.append(e.getKey()).append(" : ").append(e.getValue().toString()).append("\n");
             });
             sb.append("\nCookies :\n");
-            responseContext.getCookies().entrySet().forEach((e) -> {
+            requestContext.getCookies().entrySet().forEach((e) -> {
                 sb.append(e.getKey()).append(" : ").append(e.getValue()).append("\n");
             });
             
             return sb.toString();
         });
+        
     }
 
 }

@@ -36,8 +36,8 @@ public abstract class AbstractApplication extends Application {
             java.util.logging.Logger.getLogger(getClass().getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         resources.add(nl.tjonahen.rs.cors.CrossOriginResourceSharingFilter.class);
-        resources.add(nl.tjonahen.rs.logging.RequestLoggerFilter.class);
-        resources.add(nl.tjonahen.rs.logging.ResponseLoggerFilter.class);
+        resources.add(nl.tjonahen.rs.logging.LoggingRequestFilter.class);
+        resources.add(nl.tjonahen.rs.logging.LoggingResponseFilter.class);
         resources.add(nl.tjonahen.rs.error.UnhandledExceptionMapper.class);
 
         addRestResourceClasses(resources);

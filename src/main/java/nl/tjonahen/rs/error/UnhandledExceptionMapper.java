@@ -16,7 +16,9 @@
  */
 package nl.tjonahen.rs.error;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -33,10 +35,11 @@ public class UnhandledExceptionMapper implements ExceptionMapper<Throwable> {
 
     @Override
     public Response toResponse(Throwable exception) {
-        LOGGER.severe(() -> "Unhandled exception : " + exception.getMessage());
+        LOGGER.log(Level.SEVERE, "Unhandled exception ", exception);
         return Response
                     .status(Response.Status.BAD_REQUEST)
-                    .entity(new Error(exception.getMessage()))
+                    .header("Content-type", MediaType.TEXT_PLAIN)
+                    .entity(new ErrorMessage(exception.getMessage()))
                     .build();
     }
     
