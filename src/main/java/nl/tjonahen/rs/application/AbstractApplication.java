@@ -30,15 +30,16 @@ public abstract class AbstractApplication extends Application {
     public Set<Class<?>> getClasses() {
         Set<Class<?>> resources = new java.util.HashSet<>();
         // following code can be used to customize Jersey 2.0 JSON provider:
-        try {
-            resources.add(Class.forName("org.glassfish.jersey.jackson.JacksonFeature"));
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(getClass().getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        resources.add(nl.tjonahen.rs.cors.CrossOriginResourceSharingFilter.class);
+//        try {
+//            resources.add(Class.forName("org.glassfish.jersey.jackson.JacksonFeature"));
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(getClass().getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
         resources.add(nl.tjonahen.rs.logging.LoggingRequestFilter.class);
-        resources.add(nl.tjonahen.rs.logging.LoggingResponseFilter.class);
+        resources.add(nl.tjonahen.rs.cors.CrossOriginResourceSharingFilter.class);
+
         resources.add(nl.tjonahen.rs.error.UnhandledExceptionMapper.class);
+        resources.add(nl.tjonahen.rs.logging.LoggingResponseFilter.class);
 
         addRestResourceClasses(resources);
 

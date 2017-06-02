@@ -38,7 +38,7 @@ public class UnhandledExceptionMapper implements ExceptionMapper<Throwable> {
         LOGGER.log(Level.SEVERE, "Unhandled exception ", exception);
         return Response
                     .status(Response.Status.BAD_REQUEST)
-                    .header("Content-type", MediaType.TEXT_PLAIN)
+                    .header("Content-type", MediaType.APPLICATION_JSON)
                     .entity(new ErrorMessage(exception.getMessage()))
                     .build();
     }
